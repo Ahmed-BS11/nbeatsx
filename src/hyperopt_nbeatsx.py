@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 from functools import partial
 from hyperopt import fmin, tpe, hp, Trials, STATUS_OK
-PROJECT_ROOT = "/content/nbeatsx"
+PROJECT_ROOT = "/kaggle/working/nbeatsx"
 os.chdir(PROJECT_ROOT)
 sys.path.insert(0, PROJECT_ROOT)
 
