@@ -6,6 +6,16 @@ import torch as t
 from torch.utils.data import Dataset, DataLoader
 from collections import defaultdict
 
+def patch_asscalar(a):
+    return a.item()
+
+setattr(np, "asscalar", patch_asscalar)
+
+def floatt(a):
+    return float(a)
+setattr(np, "float", floatt)
+
+
 class TimeSeriesDataset(Dataset):
     def __init__(self,
                  Y_df: pd.DataFrame,

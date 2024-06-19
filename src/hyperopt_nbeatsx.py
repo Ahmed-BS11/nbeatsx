@@ -7,19 +7,26 @@ import random
 import torch
 import numpy as np
 import pandas as pd
+import sys
 
 from datetime import datetime
 from functools import partial
 from hyperopt import fmin, tpe, hp, Trials, STATUS_OK
+PROJECT_ROOT = "/content/nbeatsx"
+os.chdir(PROJECT_ROOT)
+sys.path.insert(0, PROJECT_ROOT)
 
+# Import local modules
 from src.utils.experiment.utils_experiment import run_val_nbeatsx, run_test_nbeatsx
 from src.utils.data.datasets.epf import EPF, EPFInfo
+
 
 TEST_DATE = {'NP': '2016-12-27',
              'PJM':'2016-12-27',
              'BE':'2015-01-04',
              'FR': '2015-01-04',
-             'DE':'2016-01-04'}
+             'DE':'2016-01-04',
+             'data_nbeatsx':'2018-06-01'}
 
 def parse_trials(trials):
     """

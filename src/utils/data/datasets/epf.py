@@ -44,9 +44,14 @@ class DE:
     test_date: str = '2016-01-04'
     name: str = 'DE'
 
+@dataclass
+class data_nbeatsx:
+    test_date: str = '2018-06-01'
+    name: str = 'data_nbeatsx'
+
 # Cell
-EPFInfo = Info(groups=('NP', 'PJM', 'BE', 'FR', 'DE'),
-               class_groups=(NP, PJM, BE, FR, DE))
+EPFInfo = Info(groups=('NP', 'PJM', 'BE', 'FR', 'DE','data_nbeatsx'),
+               class_groups=(NP, PJM, BE, FR, DE,data_nbeatsx))
 
 # Cell
 class EPF:
