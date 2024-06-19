@@ -20,5 +20,4 @@ __pycache__/
 
 *.DS_Store
 *.vscode
-/data/
 results/
