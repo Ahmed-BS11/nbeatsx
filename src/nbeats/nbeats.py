@@ -214,7 +214,7 @@ class Nbeats(object):
             x_t_n_inputs = self.output_size * int(sum([len(x) for x in self.include_var_dict.values()]))
 
             # Correction because week_day only adds 1 no output_size
-            if len(self.include_var_dict['week_day'])>0:
+            if len(self.include_var_dict['dayofweek'])>0:
                 x_t_n_inputs = x_t_n_inputs - self.output_size + 1
         else:
             x_t_n_inputs = self.input_size
