@@ -86,20 +86,23 @@ class EPF:
         if 'Unnamed: 0' in df.columns:
             df = df.drop(columns=['Unnamed: 0'])
 
-            # Rename 'ds' and 'y' columns
-        df.rename(columns={'ds': 'ds', 'y': 'y'}, inplace=True)
-
-            # Identify exogenous columns
+        # Identify exogenous columns
         exogenous_columns = [col for col in df.columns if col not in ['ds', 'y']]
 
-        # Rename exogenous columns
-        new_columns = ['ds', 'y'] + [f'Exogenous{i}' for i in range(1, len(exogenous_columns) + 1)]
-
-        df.columns = new_columns
+        # Define the desired column order
+        desired_columns = ['ds', 'y'] + exogenous_columns
+        
+        # Reindex the DataFrame with the desired column order
+        df = df.reindex(columns=desired_columns)
 
         print(df.columns)
+
+        print(df.head())
+
+        print(df.columns,df['ds'].iloc[-1])
+
         df['unique_id'] = group
-        
+
         print('\n','3rd head',df.head())
         print(df['ds'].iloc[-1])
         df['ds'] = pd.to_datetime(df['ds'])
