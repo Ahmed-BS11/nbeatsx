@@ -91,7 +91,7 @@ class EPF:
 
         # Define the desired column order
         desired_columns = ['ds', 'y'] + exogenous_columns
-        
+
         # Reindex the DataFrame with the desired column order
         df = df.reindex(columns=desired_columns)
 
@@ -115,7 +115,9 @@ class EPF:
         dummies_cols = [col for col in df if col.startswith('day')]
 
         Y = df.filter(items=['unique_id', 'ds', 'y'])
-        X = df.filter(items=['unique_id', 'ds', 'Exogenous1', 'Exogenous2', 'week_day'] + \
+        X = df.filter(items=['unique_id', 'ds', 'RRP', 'dayofweek', 'month', 'day', 'is_weekend',
+                    'is_month_start', 'is_month_end', 'is_quarter_start',
+                    'days_since_start_of_year','week_day'] + \
                       dummies_cols)
 
         return Y, X, None
