@@ -218,10 +218,11 @@ def main(args):
     print("Best loss: ", trials_df.loc[idx]['loss'])
 
     # Append train and test data
-    Y_df = y_insample_df.append(y_outsample_df, ignore_index=True)
+    Y_df = pd.concat([y_insample_df, y_outsample_df], ignore_index=True)
     Y_df = Y_df.sort_values(['unique_id', 'ds']).reset_index(drop=True)
 
-    X_df = X_t_insample_df.append(X_t_outsample_df, ignore_index=True)
+    # Concatenate X_t_insample_df and X_t_outsample_df
+    X_df = pd.concat([X_t_insample_df, X_t_outsample_df], ignore_index=True)
     X_df = X_df.sort_values(['unique_id', 'ds']).reset_index(drop=True)
 
     # Run auxiliary function which performs rolling forecasts
