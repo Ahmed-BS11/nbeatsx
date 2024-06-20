@@ -27,7 +27,7 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     """
     y_shift = None
     y_scale = None
-    print("===============================================================",X_df.columns)
+
     mask = mask.astype(int)
     
     if normalizer_y is not None:
@@ -48,7 +48,6 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     filter_variables = ['unique_id', 'ds','RRP', 'dayofweek', 'month', 'day', 'is_weekend',
                     'is_month_start', 'is_month_end', 'is_quarter_start',
                     'days_since_start_of_year']
-    print("++=+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=",X_df.columns)
 
     X_df = X_df[filter_variables]
 
@@ -151,37 +150,37 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     # For eg, -1 will include the future (corresponding to the forecasts variables), -2 will add the last
     # available day (1 day lag), etc.
     include_var_dict = {
-            'y': [-8, -4, -3, -2],
-            'week_day': [-1],
-            'RRP': [-8, -6, -4,-3, -2,-1], 
+            'y': [-1],
+            'week_day': [],
+            'RRP': [], 
             'dayofweek': [-1], 
             'month': [-1], 
             'day': [-1], 
             'season': [-1],
             'is_weekend': [-2,-1],
-            'is_month_start': [-3,-2,-1],
-            'is_month_end': [-3,-2,-1], 
+            'is_month_start': [-2,-1],
+            'is_month_end': [-2,-1], 
             'is_quarter_start': [-1],
             'days_since_start_of_year': [-2,-1], 
             'week_day': [-1]   
         }
-
+    
     if mc['incl_pr1']: include_var_dict['y'].append(-2)
     if mc['incl_pr2']: include_var_dict['y'].append(-3)
     if mc['incl_pr3']: include_var_dict['y'].append(-4)
     if mc['incl_pr7']: include_var_dict['y'].append(-8)
-        
-    if mc['incl_ex1_0']: include_var_dict['Exogenous1'].append(-1)
-    if mc['incl_ex1_1']: include_var_dict['Exogenous1'].append(-2)
-    if mc['incl_ex1_7']: include_var_dict['Exogenous1'].append(-8)
-        
+    
+    if mc['incl_ex1_0']: include_var_dict['RRP'].append(-1)
+    if mc['incl_ex1_1']: include_var_dict['RRP'].append(-2)
+    if mc['incl_ex1_7']: include_var_dict['RRP'].append(-8)
+    """ 
     if mc['incl_ex2_0']: include_var_dict['Exogenous2'].append(-1)
     if mc['incl_ex2_1']: include_var_dict['Exogenous2'].append(-2)
     if mc['incl_ex2_7']: include_var_dict['Exogenous2'].append(-8)
-
+    """
     # Inside the model only the week_day of the first hour of the horizon will be selected as input
     if mc['incl_day']: include_var_dict['week_day'].append(-1) 
-
+    
     print(47*'=' + '\n')
     print(pd.Series(mc))
     print(47*'=' + '\n')
