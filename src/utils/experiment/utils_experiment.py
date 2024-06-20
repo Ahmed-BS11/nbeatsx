@@ -48,8 +48,8 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     filter_variables = ['unique_id', 'ds','RRP', 'dayofweek', 'month', 'day', 'is_weekend',
                     'is_month_start', 'is_month_end', 'is_quarter_start',
                     'days_since_start_of_year']
-    print(X_df.columns)
-    
+    print("++=+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=",X_df.columns)
+
     X_df = X_df[filter_variables]
 
     return Y_df, X_df, scaler_y
