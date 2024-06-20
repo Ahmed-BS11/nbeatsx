@@ -83,11 +83,23 @@ class EPF:
         df = pd.read_csv(file)
         print(df.columns)
 
-        df.columns = ['ds', 'y'] + \
-                     [f'Exogenous{i}' for i in range(1, len(df.columns) - 1)]
-        
-        print('\n','2nd head',df.head())
+        if 'Unnamed: 0' in df.columns:
+            df = df.drop(columns=['Unnamed: 0'])
+
+            # Rename 'ds' and 'y' columns
+        df.rename(columns={'ds': 'ds', 'y': 'y'}, inplace=True)
+
+            # Identify exogenous columns
+        exogenous_columns = [col for col in df.columns if col not in ['ds', 'y']]
+
+        # Rename exogenous columns
+        new_columns = ['ds', 'y'] + [f'Exogenous{i}' for i in range(1, len(exogenous_columns) + 1)]
+
+        df.columns = new_columns
+
+        print(df.columns)
         df['unique_id'] = group
+        
         print('\n','3rd head',df.head())
         print(df['ds'].iloc[-1])
         df['ds'] = pd.to_datetime(df['ds'])
