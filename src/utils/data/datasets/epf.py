@@ -81,9 +81,11 @@ class EPF:
         file = path / f'{group}.csv'
 
         df = pd.read_csv(file)
-        print('\n','1st head',df.head())
+        print(df.columns())
+
         df.columns = ['ds', 'y'] + \
                      [f'Exogenous{i}' for i in range(1, len(df.columns) - 1)]
+        
         print('\n','2nd head',df.head())
         df['unique_id'] = group
         print('\n','3rd head',df.head())
