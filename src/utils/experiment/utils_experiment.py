@@ -50,7 +50,7 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
                     'days_since_start_of_year']
     print("++=+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=",X_df.columns)
 
-    X_df = X_df[filter_variables]
+    #X_df = X_df[filter_variables]
 
     return Y_df, X_df, scaler_y
 
