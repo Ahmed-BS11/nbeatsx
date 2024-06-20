@@ -27,7 +27,7 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     """
     y_shift = None
     y_scale = None
-
+    print(X_df.columns)
     mask = mask.astype(int)
     
     if normalizer_y is not None:
