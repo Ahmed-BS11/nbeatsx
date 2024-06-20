@@ -46,7 +46,7 @@ class DE:
 
 @dataclass
 class data_nbeatsx:
-    test_date: str = '2019-06-01'
+    test_date: str = '01/06/2019  00:00:00'
     name: str = 'data_nbeatsx'
 
 # Cell
