@@ -81,11 +81,12 @@ class EPF:
         file = path / f'{group}.csv'
 
         df = pd.read_csv(file)
-        print(df.head())
+        print('\n','1st head',df.head())
         df.columns = ['ds', 'y'] + \
                      [f'Exogenous{i}' for i in range(1, len(df.columns) - 1)]
-
+        print('\n','2nd head',df.head())
         df['unique_id'] = group
+        print('\n','3rd head',df.head())
         print(df['ds'].iloc[-1])
         df['ds'] = pd.to_datetime(df['ds'])
         print(df['ds'].iloc[-1])
