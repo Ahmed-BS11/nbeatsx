@@ -30,7 +30,7 @@ def filter_input_vars(insample_y, insample_x_t, outsample_x_t, t_cols, include_v
         if len(include_var_dict[var])>0:
             t_col_idx    = t_cols.index(var)
             t_col_filter = include_var_dict[var]
-            if var != 'week_day':
+            if var != 'dayofweek':
                 input_vars  += [x_t[:, t_col_idx, t_col_filter, :]]
             else:
                 assert t_col_filter == [-1], f'Day of week must be of outsample not {t_col_filter}'
@@ -40,7 +40,7 @@ def filter_input_vars(insample_y, insample_x_t, outsample_x_t, t_cols, include_v
     x_t_filter = t.cat(input_vars, dim=1)
     x_t_filter = x_t_filter.view(batch_size,-1)
 
-    if len(include_var_dict['week_day'])>0:
+    if len(include_var_dict['dayofweek'])>0:
         x_t_filter = t.cat([x_t_filter, day_var], dim=1)
 
     return x_t_filter
