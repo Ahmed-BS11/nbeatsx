@@ -81,7 +81,7 @@ class EPF:
         file = path / f'{group}.csv'
 
         df = pd.read_csv(file)
-        print(df.columns())
+        print(df.columns)
 
         df.columns = ['ds', 'y'] + \
                      [f'Exogenous{i}' for i in range(1, len(df.columns) - 1)]
