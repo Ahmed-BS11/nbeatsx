@@ -86,7 +86,9 @@ class EPF:
                      [f'Exogenous{i}' for i in range(1, len(df.columns) - 1)]
 
         df['unique_id'] = group
+        print(df['ds'].iloc[-1])
         df['ds'] = pd.to_datetime(df['ds'])
+        print(df['ds'].iloc[-1])
         df['week_day'] = df['ds'].dt.dayofweek
 
         dummies = pd.get_dummies(df['week_day'], prefix='day')
