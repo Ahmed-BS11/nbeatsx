@@ -151,9 +151,8 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     # available day (1 day lag), etc.
     include_var_dict = {
             'y': [-1],
-            'week_day': [],
             'RRP': [], 
-            'dayofweek': [-1], 
+            'dayofweek': [], 
             'month': [-1], 
             'day': [-1], 
             'season': [-1],
@@ -162,7 +161,6 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
             'is_month_end': [-2,-1], 
             'is_quarter_start': [-1],
             'days_since_start_of_year': [-2,-1], 
-            'week_day': [-1]   
         }
     
     if mc['incl_pr1']: include_var_dict['y'].append(-2)
@@ -179,7 +177,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     if mc['incl_ex2_7']: include_var_dict['Exogenous2'].append(-8)
     """
     # Inside the model only the week_day of the first hour of the horizon will be selected as input
-    if mc['incl_day']: include_var_dict['week_day'].append(-1) 
+    if mc['incl_day']: include_var_dict['dayofweek'].append(-1) 
     
     print(47*'=' + '\n')
     print(pd.Series(mc))
