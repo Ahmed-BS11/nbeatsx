@@ -38,12 +38,16 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
 
     if normalizer_x is not None:
         scaler_x = Scaler(normalizer=normalizer_x)
-        X_df['Exogenous1'] = scaler_x.scale(x=X_df['Exogenous1'].values, mask=mask)
 
-        scaler_x = Scaler(normalizer=normalizer_x)
-        X_df['Exogenous2'] = scaler_x.scale(x=X_df['Exogenous2'].values, mask=mask)
+        for col in ['RRP', 'dayofweek', 'month', 'day', 'is_weekend',
+                    'is_month_start', 'is_month_end', 'is_quarter_start',
+                    'days_since_start_of_year']:
+            if col in X_df.columns:
+                X_df[col] = scaler_x.fit_transform(X_df[[col]])
 
-    filter_variables = ['unique_id', 'ds', 'Exogenous1', 'Exogenous2', 'week_day'] + [col for col in X_df if (col.startswith('day'))]
+    filter_variables = ['unique_id', 'ds','RRP', 'dayofweek', 'month', 'day', 'is_weekend',
+                    'is_month_start', 'is_month_end', 'is_quarter_start',
+                    'days_since_start_of_year']
 
     X_df = X_df[filter_variables]
 
