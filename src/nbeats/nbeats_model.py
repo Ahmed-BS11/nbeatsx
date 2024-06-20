@@ -25,7 +25,6 @@ def filter_input_vars(insample_y, insample_x_t, outsample_x_t, t_cols, include_v
     x_t = x_t.reshape(batch_size, n_channels, 8, 24)
 
     input_vars = []
-    print("those are include_var_dict******************************************","\n","*************************************************************",include_var_dict.keys())
     for var in include_var_dict.keys():
         if len(include_var_dict[var])>0:
             t_col_idx    = t_cols.index(var)
