@@ -160,6 +160,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
             'is_month_start': [-2,-1],
             'is_month_end': [-2,-1], 
             'is_quarter_start': [-1],
+            'season': [-1],
             'days_since_start_of_year': [-2,-1], 
         }
     
