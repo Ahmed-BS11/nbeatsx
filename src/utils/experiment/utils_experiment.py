@@ -238,7 +238,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
                                      offset=0,
                                      input_size=int(mc['input_size_multiplier'] * mc['output_size']),
                                      output_size=int(mc['output_size']),
-                                     idx_to_sample_freq=0, #TODO: pensar esto
+                                     idx_to_sample_freq=24, #TODO: pensar esto
                                      batch_size=int(mc['batch_size']),
                                      is_train_loader=False,
                                      shuffle=False)
@@ -284,8 +284,9 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     
     # Predict on validation
     _, y_hat, _ = model.predict(ts_loader=val_ts_loader)
+    print('yhatttt',len(y_hat.shape))
     y_hat = y_hat.flatten()
-
+    print('yhatttt  after flatten',len(y_hat.shape))
     # Scale to original scale
     if mc['normalizer_y'] is not None:
         y_hat = scaler_y.inv_scale(x=y_hat)
