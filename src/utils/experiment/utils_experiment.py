@@ -201,9 +201,11 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
 
     print(f'Train {sum(train_outsample_mask)} hours = {np.round(sum(train_outsample_mask)/(24*365),2)} years')
     print(f'Validation {sum(1-train_outsample_mask)} hours = {np.round(sum(1-train_outsample_mask)/(24*365),2)} years')
-    print('y_true',len(Y_df['y']))
+    print('y_true',len(Y_df['y'].values))
     # To compute validation loss in true scale
     y_validation_vector = Y_df['y'].values[(1-train_outsample_mask)==1]
+    print('y_true',len(Y_df['y'].values))
+    print('***'*45)
     print('y_validation_vector',len(y_validation_vector))
     # -------------------------------------------------- Data Wrangling --------------------------------------------------
     # Transform data with scale transformation
