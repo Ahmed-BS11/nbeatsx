@@ -65,7 +65,7 @@ class data_nbeatsx_inpg:
 
 # Cell
 EPFInfo = Info(groups=('NP', 'PJM', 'BE', 'FR', 'DE', 'data_nbeatsx', 'data_nbeatsx_inpg'),
-               class_groups=(NP, PJM, BE, FR, DE, data_nbeatsx))
+               class_groups=(NP, PJM, BE, FR, DE, data_nbeatsx, data_nbeatsx_inpg))
 
 # Cell
 
