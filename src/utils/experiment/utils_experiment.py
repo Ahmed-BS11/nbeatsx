@@ -110,7 +110,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     # To not modify Y_df and X_df
     Y_df_scaled = Y_df.copy()
     X_df_scaled = X_df.copy()
-
+    print(X_df.shape)
     # Save trials, can analyze progress
     save_every_n_step = 5
     current_step = len(trials.trials)
@@ -201,10 +201,10 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
 
     print(f'Train {sum(train_outsample_mask)} hours = {np.round(sum(train_outsample_mask)/(24*365),2)} years')
     print(f'Validation {sum(1-train_outsample_mask)} hours = {np.round(sum(1-train_outsample_mask)/(24*365),2)} years')
-
+    print('y_true',len(Y_df['y']))
     # To compute validation loss in true scale
     y_validation_vector = Y_df['y'].values[(1-train_outsample_mask)==1]
-
+    print('y_validation_vector',len(y_validation_vector))
     # -------------------------------------------------- Data Wrangling --------------------------------------------------
     # Transform data with scale transformation
     Y_df_scaled, X_df_scaled, scaler_y = transform_data(Y_df = Y_df_scaled,
@@ -288,6 +288,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     if mc['normalizer_y'] is not None:
         y_hat = scaler_y.inv_scale(x=y_hat)
 
+    print('yhat',len(y_hat),'validation vector',len(y_validation_vector))
     # Compute MAE
     val_mae = mae(y=y_validation_vector, y_hat=y_hat)
     run_time = time.time() - start_time
