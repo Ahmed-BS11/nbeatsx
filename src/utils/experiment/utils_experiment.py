@@ -285,6 +285,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     # Predict on validation
     _, y_hat, _ = model.predict(ts_loader=val_ts_loader)
     print('yhatttt',y_hat.shape)
+    y_hat = y_hat[:182, :]
     y_hat = y_hat.flatten()
     print('yhatttt  after flatten',y_hat.shape)
     # Scale to original scale
