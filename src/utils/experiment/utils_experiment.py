@@ -288,7 +288,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         y_hat = scaler_y.inv_scale(x=y_hat)
 
     # Compute MAE
-    print('1st true',y_validation_vector,'last true', y_hat)
+    print('1st true',y_validation_vector,'last true', y_hat, 'len valid vector vs len yhat', len(y_validation_vector), len(y_hat))
     val_mae = mae(y=y_validation_vector, y_hat=y_hat)
     run_time = time.time() - start_time
 
