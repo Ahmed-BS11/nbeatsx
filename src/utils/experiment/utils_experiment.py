@@ -289,7 +289,8 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
 
     # Compute MAE
     print('1st true',y_validation_vector,'last true', y_hat, 'len valid vector vs len yhat', len(y_validation_vector), len(y_hat))
-    val_mae = mae(y=y_validation_vector, y_hat=y_hat)
+    moo=min(len(y_validation_vector), len(y_hat))
+    val_mae = mae(y=y_validation_vector[moo:], y_hat=y_hat[moo:])
     run_time = time.time() - start_time
 
     results =  {'loss': val_mae,
