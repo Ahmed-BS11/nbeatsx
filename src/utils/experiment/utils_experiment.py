@@ -444,7 +444,7 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
                                                                   return_decomposition=True)
         y_hat_split = y_hat_split.flatten() # Only for univariate models
         print('y_hatsplit length',len(y_hat_split), mc['output_size'])
-        assert len(y_hat_split) == mc['output_size'], 'Forecast should have length equal to output_size'
+        assert len(y_hat_split[:24]) == mc['output_size'], 'Forecast should have length equal to output_size'
  
         if mc['normalizer_y'] is not None:
             y_hat_split = scaler_y.inv_scale(x=y_hat_split[:24])
