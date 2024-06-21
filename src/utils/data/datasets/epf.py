@@ -19,41 +19,57 @@ from .utils import download_file, Info, TimeSeriesDataclass
 SOURCE_URL = 'https://sandbox.zenodo.org/api/files/da5b2c6f-8418-4550-a7d0-7f2497b40f1b/'
 
 # Cell
+
+
 @dataclass
 class NP:
     test_date: str = '2016-12-27'
     name: str = 'NP'
+
 
 @dataclass
 class PJM:
     test_date: str = '2016-12-27'
     name: str = 'PJM'
 
+
 @dataclass
 class BE:
     test_date: str = '2015-01-04'
     name: str = 'BE'
+
 
 @dataclass
 class FR:
     test_date: str = '2015-01-04'
     name: str = 'FR'
 
+
 @dataclass
 class DE:
     test_date: str = '2016-01-04'
     name: str = 'DE'
+
 
 @dataclass
 class data_nbeatsx:
     test_date: str = '01/06/2019  00:00:00'
     name: str = 'data_nbeatsx'
 
-# Cell
-EPFInfo = Info(groups=('NP', 'PJM', 'BE', 'FR', 'DE','data_nbeatsx'),
-               class_groups=(NP, PJM, BE, FR, DE,data_nbeatsx))
+
+@dataclass
+class data_nbeatsx_inpg:
+    test_date: str = '01/06/2019  00:00:00'
+    name: str = 'data_nbeatsx_inpg'
+
 
 # Cell
+EPFInfo = Info(groups=('NP', 'PJM', 'BE', 'FR', 'DE', 'data_nbeatsx', 'data_nbeatsx_inpg'),
+               class_groups=(NP, PJM, BE, FR, DE, data_nbeatsx))
+
+# Cell
+
+
 class EPF:
 
     @staticmethod
@@ -70,7 +86,7 @@ class EPF:
             Directory where data will be downloaded.
         group: str
             Group name.
-            Allowed groups: 'NP', 'PJM', 'BE', 'FR', 'DE'.
+            Allowed groups: 'NP', 'PJM', 'BE', 'FR', 'DE' ,'data_nbeatsx','data_nbeatsx_inpg'.
         """
         path = Path(directory) / 'epf' / 'datasets'
 
@@ -87,7 +103,8 @@ class EPF:
             df = df.drop(columns=['Unnamed: 0'])
 
         # Identify exogenous columns
-        exogenous_columns = [col for col in df.columns if col not in ['ds', 'y']]
+        exogenous_columns = [
+            col for col in df.columns if col not in ['ds', 'y']]
 
         # Define the desired column order
         desired_columns = ['ds', 'y'] + exogenous_columns
@@ -99,11 +116,11 @@ class EPF:
 
         print(df.head())
 
-        print(df.columns,df['ds'].iloc[-1])
+        print(df.columns, df['ds'].iloc[-1])
 
         df['unique_id'] = group
 
-        print('\n','3rd head',df.head())
+        print('\n', '3rd head', df.head())
         print(df['ds'].iloc[-1])
         df['ds'] = pd.to_datetime(df['ds'])
         print(df['ds'].iloc[-1])
@@ -116,8 +133,8 @@ class EPF:
 
         Y = df.filter(items=['unique_id', 'ds', 'y'])
         X = df.filter(items=['unique_id', 'ds', 'RRP', 'dayofweek', 'month', 'day', 'is_weekend',
-                    'is_month_start', 'is_month_end', 'is_quarter_start',
-                    'days_since_start_of_year','week_day'] + \
+                             'is_month_start', 'is_month_end', 'is_quarter_start',
+                             'days_since_start_of_year', 'week_day'] +
                       dummies_cols)
 
         return Y, X, None
@@ -146,8 +163,10 @@ class EPF:
             Y.append(Y_df)
             X.append(X_df)
 
-        Y = pd.concat(Y).sort_values(['unique_id', 'ds']).reset_index(drop=True)
-        X = pd.concat(X).sort_values(['unique_id', 'ds']).reset_index(drop=True)
+        Y = pd.concat(Y).sort_values(
+            ['unique_id', 'ds']).reset_index(drop=True)
+        X = pd.concat(X).sort_values(
+            ['unique_id', 'ds']).reset_index(drop=True)
 
         S = Y[['unique_id']].drop_duplicates().reset_index(drop=True)
         dummies = pd.get_dummies(S['unique_id'], prefix='static')

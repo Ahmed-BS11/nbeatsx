@@ -39,13 +39,13 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     if normalizer_x is not None:
         scaler_x = Scaler(normalizer=normalizer_x)
 
-        for col in ['RRP', 'dayofweek', 'month', 'day', 'is_weekend',
+        for col in ['dayofweek', 'month', 'day', 'is_weekend',
                     'is_month_start', 'is_month_end', 'is_quarter_start',
                     'days_since_start_of_year']:
             if col in X_df.columns:
                 X_df[col] = scaler_x.scale(X_df[[col]], mask=mask)
 
-    filter_variables = ['unique_id', 'ds','RRP', 'dayofweek', 'month', 'day', 'is_weekend',
+    filter_variables = ['unique_id', 'ds', 'dayofweek', 'month', 'day', 'is_weekend',
                     'is_month_start', 'is_month_end', 'is_quarter_start',
                     'days_since_start_of_year']
 
@@ -151,7 +151,6 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     # available day (1 day lag), etc.
     include_var_dict = {
             'y': [-1],
-            'RRP': [], 
             'dayofweek': [], 
             'month': [-1], 
             'day': [-1], 
@@ -167,11 +166,11 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     if mc['incl_pr2']: include_var_dict['y'].append(-3)
     if mc['incl_pr3']: include_var_dict['y'].append(-4)
     if mc['incl_pr7']: include_var_dict['y'].append(-8)
-    
+    """ 
     if mc['incl_ex1_0']: include_var_dict['RRP'].append(-1)
     if mc['incl_ex1_1']: include_var_dict['RRP'].append(-2)
     if mc['incl_ex1_7']: include_var_dict['RRP'].append(-8)
-    """ 
+    
     if mc['incl_ex2_0']: include_var_dict['Exogenous2'].append(-1)
     if mc['incl_ex2_1']: include_var_dict['Exogenous2'].append(-2)
     if mc['incl_ex2_7']: include_var_dict['Exogenous2'].append(-8)

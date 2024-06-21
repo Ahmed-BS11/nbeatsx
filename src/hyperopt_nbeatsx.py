@@ -26,7 +26,8 @@ TEST_DATE = {'NP': '2016-12-27',
              'BE':'2015-01-04',
              'FR': '2015-01-04',
              'DE':'2016-01-04',
-             'data_nbeatsx':'2019-06-01'}
+             'data_nbeatsx':'2019-06-01',
+             'data_nbeatsx_inpg':'2019-06-01'}
 
 def parse_trials(trials):
     """
