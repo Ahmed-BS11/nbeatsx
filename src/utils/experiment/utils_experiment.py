@@ -238,7 +238,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
                                      offset=0,
                                      input_size=int(mc['input_size_multiplier'] * mc['output_size']),
                                      output_size=int(mc['output_size']),
-                                     idx_to_sample_freq=24, #TODO: pensar esto
+                                     idx_to_sample_freq=0, #TODO: pensar esto
                                      batch_size=int(mc['batch_size']),
                                      is_train_loader=False,
                                      shuffle=False)
