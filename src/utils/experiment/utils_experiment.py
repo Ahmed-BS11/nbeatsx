@@ -443,7 +443,7 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
         _, y_hat_split, y_hat_decomposed_split, _ = model.predict(ts_loader=test_ts_loader,
                                                                   return_decomposition=True)
         y_hat_split = y_hat_split.flatten() # Only for univariate models
-
+        print('y_hatsplit length',len(y_hat_split), mc['output_size'])
         assert len(y_hat_split) == mc['output_size'], 'Forecast should have length equal to output_size'
  
         if mc['normalizer_y'] is not None:
