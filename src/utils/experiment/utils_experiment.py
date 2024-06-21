@@ -352,6 +352,7 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
 
         # train_mask: 1 to keep, 0 to mask
         train_outsample_mask = np.ones(len(Y_df_scaled))
+        print(24*'=0',len(train_outsample_mask))
         train_outsample_mask[val_idx] = 0
 
         # Instantiate train and validation dataset and loaders
