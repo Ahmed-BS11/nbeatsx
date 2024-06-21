@@ -447,7 +447,7 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
         assert len(y_hat_split) == mc['output_size'], 'Forecast should have length equal to output_size'
  
         if mc['normalizer_y'] is not None:
-            y_hat_split = scaler_y.inv_scale(x=y_hat_split)
+            y_hat_split = scaler_y.inv_scale(x=y_hat_split[:24])
 
         print('Prediction: ', y_hat_split)
         y_hat += list(y_hat_split)
