@@ -29,7 +29,7 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     y_scale = None
 
     mask = mask.astype(int)
-    
+
     if normalizer_y is not None:
         scaler_y = Scaler(normalizer=normalizer_y)
         Y_df['y'] = scaler_y.scale(x=Y_df['y'].values, mask=mask)
@@ -39,19 +39,24 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     if normalizer_x is not None:
         scaler_x = Scaler(normalizer=normalizer_x)
 
-        for col in ['dayofweek', 'month', 'day', 'is_weekend',
-                    'is_month_start', 'is_month_end', 'is_quarter_start',
-                    'days_since_start_of_year']:
+        for col in ['attention', 'temperature_2m', 'relative_humidity_2m', 'precipitation',
+                    'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m',
+                    'dayofweek', 'month', 'day', 'season', 'is_weekend', 'is_month_start',
+                    'is_month_end', 'is_quarter_start', 'days_since_start_of_year',
+                    ]:
             if col in X_df.columns:
                 X_df[col] = scaler_x.scale(X_df[[col]], mask=mask)
 
-    filter_variables = ['unique_id', 'ds', 'dayofweek', 'month', 'day', 'is_weekend',
-                    'is_month_start', 'is_month_end', 'is_quarter_start',
-                    'days_since_start_of_year']
+    filter_variables = ['attention', 'temperature_2m', 'relative_humidity_2m', 'precipitation',
+                        'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m',
+                        'dayofweek', 'month', 'day', 'season', 'is_weekend', 'is_month_start',
+                        'is_month_end', 'is_quarter_start', 'days_since_start_of_year',
+                        ]
 
     X_df = X_df[filter_variables]
 
     return Y_df, X_df, scaler_y
+
 
 def train_val_split(len_series, offset, window_sampling_limit, n_val_weeks, ds_per_day):
     """
@@ -64,12 +69,12 @@ def train_val_split(len_series, offset, window_sampling_limit, n_val_weeks, ds_p
     last_day = int(last_ds/ds_per_day)
     first_day = int(first_ds/ds_per_day)
 
-    days = set(range(first_day, last_day)) # All days, to later get train days
+    days = set(range(first_day, last_day))  # All days, to later get train days
     # Sample weeks from here, -7 to avoid sampling from last week
     # To not sample first week and have inputs
     sampling_days = set(range(first_day + 7, last_day - 7))
-    validation_days = set({}) # Val days set
-    
+    validation_days = set({})  # Val days set
+
     # For loop for n of weeks in validation
     for i in range(n_val_weeks):
         # Sample random day, init of week
@@ -89,17 +94,19 @@ def train_val_split(len_series, offset, window_sampling_limit, n_val_weeks, ds_p
 
     train_idx = []
     for day in train_days:
-        hours_idx = range(day*ds_per_day,(day+1)*ds_per_day)
+        hours_idx = range(day*ds_per_day, (day+1)*ds_per_day)
         train_idx += hours_idx
 
     val_idx = []
     for day in validation_days:
-        hours_idx = range(day*ds_per_day,(day+1)*ds_per_day)
+        hours_idx = range(day*ds_per_day, (day+1)*ds_per_day)
         val_idx += hours_idx
 
-    assert all([idx < last_ds for idx in val_idx]), 'Last idx should be smaller than last_ds'
-    
+    assert all([idx < last_ds for idx in val_idx]
+               ), 'Last idx should be smaller than last_ds'
+
     return train_idx, val_idx
+
 
 def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_validation, trials, trials_file_name):
     """
@@ -114,12 +121,12 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     # Save trials, can analyze progress
     save_every_n_step = 5
     current_step = len(trials.trials)
-    if (current_step % save_every_n_step==0):
+    if (current_step % save_every_n_step == 0):
         with open(trials_file_name, "wb") as f:
             pickle.dump(trials, f)
 
     start_time = time.time()
-    
+
     # -------------------------------------------------- Parse hyperparameters --------------------------------------------------
     # Models and loaders will receive hyperparameters from mc (model config) dictionary.
     mc = hyperparameters
@@ -130,8 +137,8 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         mc['idx_to_sample_freq'] = 24
 
     # Avoid this combination because it can produce results with large variance
-    if (mc['batch_normalization']) and (mc['normalizer_y']==None):
-         mc['normalizer_y'] = 'median'
+    if (mc['batch_normalization']) and (mc['normalizer_y'] == None):
+        mc['normalizer_y'] = 'median'
 
     # Other hyperparameters which we do not explore (are fixed)
     mc['input_size_multiplier'] = 7
@@ -144,44 +151,66 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     mc['loss_hypar'] = None
     mc['val_loss'] = mc['loss']
 
-    mc['n_hidden'] = len(mc['stack_types']) * [ [int(mc['n_hidden_1']), int(mc['n_hidden_2'])] ]
+    mc['n_hidden'] = len(mc['stack_types']) * \
+        [[int(mc['n_hidden_1']), int(mc['n_hidden_2'])]]
 
     # This dictionary will be used to select particular lags as inputs for each y and exogenous variables.
     # For eg, -1 will include the future (corresponding to the forecasts variables), -2 will add the last
     # available day (1 day lag), etc.
+    """
+    'attention', 'temperature_2m', 'relative_humidity_2m', 'precipitation',
+       'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m',
+       'dayofweek', 'month', 'day', 'season', 'is_weekend', 'is_month_start',
+       'is_month_end', 'is_quarter_start', 'days_since_start_of_year',
+       """
     include_var_dict = {
-            'y': [-1],
-            'dayofweek': [], 
-            'month': [-1], 
-            'day': [-1], 
-            #'season': [-1],
-            'is_weekend': [-2,-1],
-            'is_month_start': [-2,-1],
-            'is_month_end': [-2,-1], 
-            'is_quarter_start': [-1],
-            'days_since_start_of_year': [-2,-1], 
-        }
+        'y': [-1],
+        'dayofweek': [],
+        'month': [-1],
+        'day': [-1],
+        # 'season': [-1],
+        'is_weekend': [-2, -1],
+        'is_month_start': [-2, -1],
+        'is_month_end': [-2, -1],
+        'is_quarter_start': [-1],
+        'days_since_start_of_year': [-2, -1],
+        'temperature_2m':[-1],
+        'relative_humidity_2m':[-1],
+        'precipitation':[-1],
+        'snow_depth':[-1],
+        'surface_pressure':[],
+        'cloud_cover':[],
+        'wind_speed_10m':[-1],
+        'attention':[]
+
+
+    }
+
+    if mc['incl_pr1']:
+        include_var_dict['y'].append(-2)
+    if mc['incl_pr2']:
+        include_var_dict['y'].append(-3)
+    if mc['incl_pr3']:
+        include_var_dict['y'].append(-4)
+    if mc['incl_pr7']:
+        include_var_dict['y'].append(-8)
     
-    if mc['incl_pr1']: include_var_dict['y'].append(-2)
-    if mc['incl_pr2']: include_var_dict['y'].append(-3)
-    if mc['incl_pr3']: include_var_dict['y'].append(-4)
-    if mc['incl_pr7']: include_var_dict['y'].append(-8)
+    if mc['incl_ex1_0']: include_var_dict['attention'].append(-1)
+    if mc['incl_ex1_1']: include_var_dict['attention'].append(-2)
+    if mc['incl_ex1_7']: include_var_dict['attention'].append(-8)
     """ 
-    if mc['incl_ex1_0']: include_var_dict['RRP'].append(-1)
-    if mc['incl_ex1_1']: include_var_dict['RRP'].append(-2)
-    if mc['incl_ex1_7']: include_var_dict['RRP'].append(-8)
-    
     if mc['incl_ex2_0']: include_var_dict['Exogenous2'].append(-1)
     if mc['incl_ex2_1']: include_var_dict['Exogenous2'].append(-2)
     if mc['incl_ex2_7']: include_var_dict['Exogenous2'].append(-8)
     """
     # Inside the model only the week_day of the first hour of the horizon will be selected as input
-    if mc['incl_day']: include_var_dict['dayofweek'].append(-1) 
-    
+    if mc['incl_day']:
+        include_var_dict['dayofweek'].append(-1)
+
     print(47*'=' + '\n')
     print(pd.Series(mc))
     print(47*'=' + '\n')
-    
+
     # -------------------------------------------------- Train and Validation Mask --------------------------------------------------
     # train_mask: 1 to keep, 0 to hide from training
     train_outsample_mask = np.ones(len(Y_df), dtype=int)
@@ -191,40 +220,47 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         np.random.seed(1)
         random.seed(1)
         _, val_idx = train_val_split(len_series=len(Y_df), offset=0,
-                                window_sampling_limit= mc['window_sampling_limit_multiplier'] * mc['output_size'],
-                                n_val_weeks = mc['n_val_weeks'], ds_per_day=24)
+                                     window_sampling_limit=mc['window_sampling_limit_multiplier'] *
+                                     mc['output_size'],
+                                     n_val_weeks=mc['n_val_weeks'], ds_per_day=24)
         train_outsample_mask[val_idx] = 0
     else:
         print('Random validation de-activated')
         # Last mc['n_val_weeks'] * 7 days will be used as validation
         train_outsample_mask[-mc['n_val_weeks'] * 7 * mc['output_size']:] = 0
 
-    print(f'Train {sum(train_outsample_mask)} hours = {np.round(sum(train_outsample_mask)/(24*365),2)} years')
-    print(f'Validation {sum(1-train_outsample_mask)} hours = {np.round(sum(1-train_outsample_mask)/(24*365),2)} years')
-    
+    print(
+        f'Train {sum(train_outsample_mask)} hours = {np.round(sum(train_outsample_mask)/(24*365),2)} years')
+    print(
+        f'Validation {sum(1-train_outsample_mask)} hours = {np.round(sum(1-train_outsample_mask)/(24*365),2)} years')
+
     # To compute validation loss in true scale
-    y_validation_vector = Y_df['y'].values[(1-train_outsample_mask)==1]
+    y_validation_vector = Y_df['y'].values[(1-train_outsample_mask) == 1]
 
     # -------------------------------------------------- Data Wrangling --------------------------------------------------
     # Transform data with scale transformation
-    Y_df_scaled, X_df_scaled, scaler_y = transform_data(Y_df = Y_df_scaled,
-                                                        X_df = X_df_scaled,
-                                                        mask = train_outsample_mask,
-                                                        normalizer_y = mc['normalizer_y'],
-                                                        normalizer_x = mc['normalizer_x'])
+    Y_df_scaled, X_df_scaled, scaler_y = transform_data(Y_df=Y_df_scaled,
+                                                        X_df=X_df_scaled,
+                                                        mask=train_outsample_mask,
+                                                        normalizer_y=mc['normalizer_y'],
+                                                        normalizer_x=mc['normalizer_x'])
 
     # Dataset object. Pre-process the DataFrame into pytorch tensors and windows.
-    ts_dataset = TimeSeriesDataset(Y_df=Y_df_scaled, X_df=X_df_scaled, ts_train_mask=train_outsample_mask)
+    ts_dataset = TimeSeriesDataset(
+        Y_df=Y_df_scaled, X_df=X_df_scaled, ts_train_mask=train_outsample_mask)
 
     # Loaders object. Sample windows of dataset object.
     # For more information on each parameter, refer to comments on Loader object.
     train_ts_loader = TimeSeriesLoader(model='nbeats',
                                        ts_dataset=ts_dataset,
-                                       window_sampling_limit=mc['window_sampling_limit_multiplier'] * mc['output_size'],
+                                       window_sampling_limit=mc['window_sampling_limit_multiplier'] *
+                                       mc['output_size'],
                                        offset=0,
-                                       input_size=int(mc['input_size_multiplier'] * mc['output_size']),
+                                       input_size=int(
+                                           mc['input_size_multiplier'] * mc['output_size']),
                                        output_size=int(mc['output_size']),
-                                       idx_to_sample_freq=int(mc['idx_to_sample_freq']),
+                                       idx_to_sample_freq=int(
+                                           mc['idx_to_sample_freq']),
                                        batch_size=int(mc['batch_size']),
                                        is_train_loader=True,
                                        shuffle=True)
@@ -232,11 +268,13 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     # Will sample windows on the validation set for early stopping.
     val_ts_loader = TimeSeriesLoader(model='nbeats',
                                      ts_dataset=ts_dataset,
-                                     window_sampling_limit=mc['window_sampling_limit_multiplier'] * mc['output_size'],
+                                     window_sampling_limit=mc['window_sampling_limit_multiplier'] *
+                                     mc['output_size'],
                                      offset=0,
-                                     input_size=int(mc['input_size_multiplier'] * mc['output_size']),
+                                     input_size=int(
+                                         mc['input_size_multiplier'] * mc['output_size']),
                                      output_size=int(mc['output_size']),
-                                     idx_to_sample_freq=24, #TODO: pensar esto
+                                     idx_to_sample_freq=24,  # TODO: pensar esto
                                      batch_size=int(mc['batch_size']),
                                      is_train_loader=False,
                                      shuffle=False)
@@ -257,11 +295,11 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
                    n_hidden=mc['n_hidden'],
                    n_harmonics=int(mc['n_harmonics']),
                    n_polynomials=int(mc['n_polynomials']),
-                   x_s_n_hidden = int(mc['x_s_n_hidden']),
+                   x_s_n_hidden=int(mc['x_s_n_hidden']),
                    exogenous_n_channels=int(mc['exogenous_n_channels']),
                    include_var_dict=mc['include_var_dict'],
                    t_cols=mc['t_cols'],
-                   batch_normalization = mc['batch_normalization'],
+                   batch_normalization=mc['batch_normalization'],
                    dropout_prob_theta=mc['dropout_prob_theta'],
                    dropout_prob_exogenous=mc['dropout_prob_exogenous'],
                    learning_rate=float(mc['learning_rate']),
@@ -278,8 +316,9 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
                    random_seed=int(mc['random_seed']))
 
     # Fit model
-    model.fit(train_ts_loader=train_ts_loader, val_ts_loader=val_ts_loader, n_iterations=mc['n_iterations'], eval_steps=mc['eval_steps'])
-    
+    model.fit(train_ts_loader=train_ts_loader, val_ts_loader=val_ts_loader,
+              n_iterations=mc['n_iterations'], eval_steps=mc['eval_steps'])
+
     # Predict on validation
     _, y_hat, _ = model.predict(ts_loader=val_ts_loader)
     y_hat = y_hat.flatten()
@@ -288,20 +327,22 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         y_hat = scaler_y.inv_scale(x=y_hat)
 
     # Compute MAE
-    print('1st true',y_validation_vector,'last true', y_hat, 'len valid vector vs len yhat', len(y_validation_vector), len(y_hat))
-    moo=min(len(y_validation_vector), len(y_hat))
+    print('1st true', y_validation_vector, 'last true', y_hat,
+          'len valid vector vs len yhat', len(y_validation_vector), len(y_hat))
+    moo = min(len(y_validation_vector), len(y_hat))
     val_mae = mae(y=y_validation_vector[:moo], y_hat=y_hat[:moo])
     run_time = time.time() - start_time
 
-    results =  {'loss': val_mae,
-                'mc': mc,
-                'final_insample_loss': model.final_insample_loss,
-                'final_outsample_loss': model.final_outsample_loss,
-                'trajectories': model.trajectories,
-                'run_time': run_time,
-                'status': STATUS_OK}
+    results = {'loss': val_mae,
+               'mc': mc,
+               'final_insample_loss': model.final_insample_loss,
+               'final_outsample_loss': model.final_outsample_loss,
+               'trajectories': model.trajectories,
+               'run_time': run_time,
+               'status': STATUS_OK}
 
     return results
+
 
 def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
     """
@@ -316,7 +357,7 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
     # Each split is 1 day
     n_splits = int(len_outsample/mc['output_size'])
     print(f'Number of splits: {n_splits}')
-    
+
     start_time = time.time()
     y_hat = []
     y_hat_decomposed = []
@@ -346,35 +387,42 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
         scaler_mask[-offset:] = 0
         Y_df_scaled, X_df_scaled, scaler_y = transform_data(Y_df=Y_df_scaled, X_df=X_df_scaled, mask=scaler_mask,
                                                             normalizer_y=mc['normalizer_y'], normalizer_x=mc['normalizer_x'])
-        
+
         # Train-val split for early stopping. Validation set are n_val_weeks selected at random.
         _, val_idx = train_val_split(len_series=len(Y_df), offset=offset,
-                                     window_sampling_limit= mc['window_sampling_limit_multiplier'] * mc['output_size'],
-                                     n_val_weeks = mc['n_val_weeks'], ds_per_day=24)
+                                     window_sampling_limit=mc['window_sampling_limit_multiplier'] *
+                                     mc['output_size'],
+                                     n_val_weeks=mc['n_val_weeks'], ds_per_day=24)
 
         # train_mask: 1 to keep, 0 to mask
         train_outsample_mask = np.ones(len(Y_df_scaled))
         train_outsample_mask[val_idx] = 0
 
         # Instantiate train and validation dataset and loaders
-        ts_dataset = TimeSeriesDataset(Y_df=Y_df_scaled, X_df=X_df_scaled, ts_train_mask=train_outsample_mask)
-   
+        ts_dataset = TimeSeriesDataset(
+            Y_df=Y_df_scaled, X_df=X_df_scaled, ts_train_mask=train_outsample_mask)
+
         train_ts_loader = TimeSeriesLoader(model='nbeats',
                                            ts_dataset=ts_dataset,
-                                           window_sampling_limit=mc['window_sampling_limit_multiplier'] * mc['output_size'],
-                                           offset=offset, # TO FILTER LAST OFFSET TIME STAMPS
-                                           input_size=int(mc['input_size_multiplier'] * mc['output_size']),
+                                           window_sampling_limit=mc['window_sampling_limit_multiplier'] *
+                                           mc['output_size'],
+                                           offset=offset,  # TO FILTER LAST OFFSET TIME STAMPS
+                                           input_size=int(
+                                               mc['input_size_multiplier'] * mc['output_size']),
                                            output_size=int(mc['output_size']),
-                                           idx_to_sample_freq=int(mc['idx_to_sample_freq']),
+                                           idx_to_sample_freq=int(
+                                               mc['idx_to_sample_freq']),
                                            batch_size=int(mc['batch_size']),
                                            is_train_loader=True,
                                            shuffle=True)
 
         val_ts_loader = TimeSeriesLoader(model='nbeats',
                                          ts_dataset=ts_dataset,
-                                         window_sampling_limit=mc['window_sampling_limit_multiplier'] * mc['output_size'],
-                                         offset=offset, # TO FILTER LAST OFFSET TIME STAMPS
-                                         input_size=int(mc['input_size_multiplier'] * mc['output_size']),
+                                         window_sampling_limit=mc['window_sampling_limit_multiplier'] *
+                                         mc['output_size'],
+                                         offset=offset,  # TO FILTER LAST OFFSET TIME STAMPS
+                                         input_size=int(
+                                             mc['input_size_multiplier'] * mc['output_size']),
                                          output_size=int(mc['output_size']),
                                          idx_to_sample_freq=24,
                                          batch_size=int(mc['batch_size']),
@@ -387,14 +435,19 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
         test_mask[-offset:] = 1
         test_mask[(len(Y_df_scaled) - offset + mc['output_size']):] = 0
 
-        assert test_mask.sum() == mc['output_size'], f'Sum of Test mask must be {mc["output_size"]} not {test_mask.sum()}'
+        assert test_mask.sum(
+        ) == mc['output_size'], f'Sum of Test mask must be {mc["output_size"]} not {test_mask.sum()}'
 
-        ts_dataset_test = TimeSeriesDataset(Y_df=Y_df_scaled, X_df=X_df_scaled, ts_train_mask=test_mask)
+        ts_dataset_test = TimeSeriesDataset(
+            Y_df=Y_df_scaled, X_df=X_df_scaled, ts_train_mask=test_mask)
         test_ts_loader = TimeSeriesLoader(model='nbeats',
                                           ts_dataset=ts_dataset_test,
-                                          window_sampling_limit=mc['window_sampling_limit_multiplier'] * mc['output_size'],
-                                          offset=offset - mc['output_size'], # To bypass leakeage protection
-                                          input_size=int(mc['input_size_multiplier'] * mc['output_size']),
+                                          window_sampling_limit=mc['window_sampling_limit_multiplier'] *
+                                          mc['output_size'],
+                                          # To bypass leakeage protection
+                                          offset=offset - mc['output_size'],
+                                          input_size=int(
+                                              mc['input_size_multiplier'] * mc['output_size']),
                                           output_size=int(mc['output_size']),
                                           idx_to_sample_freq=24,
                                           batch_size=int(mc['batch_size']),
@@ -416,11 +469,12 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
                            n_hidden=mc['n_hidden'],
                            n_harmonics=int(mc['n_harmonics']),
                            n_polynomials=int(mc['n_polynomials']),
-                           x_s_n_hidden = int(mc['x_s_n_hidden']),
-                           exogenous_n_channels=int(mc['exogenous_n_channels']),
+                           x_s_n_hidden=int(mc['x_s_n_hidden']),
+                           exogenous_n_channels=int(
+                               mc['exogenous_n_channels']),
                            include_var_dict=mc['include_var_dict'],
                            t_cols=mc['t_cols'],
-                           batch_normalization = mc['batch_normalization'],
+                           batch_normalization=mc['batch_normalization'],
                            dropout_prob_theta=mc['dropout_prob_theta'],
                            dropout_prob_exogenous=mc['dropout_prob_exogenous'],
                            learning_rate=float(mc['learning_rate']),
@@ -442,10 +496,11 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
         # Predict with re-calibrated model in test day
         _, y_hat_split, y_hat_decomposed_split, _ = model.predict(ts_loader=test_ts_loader,
                                                                   return_decomposition=True)
-        y_hat_split = y_hat_split.flatten() # Only for univariate models
-        print('y_hatsplit length',len(y_hat_split), mc['output_size'])
-        assert len(y_hat_split[:24]) == mc['output_size'], 'Forecast should have length equal to output_size'
- 
+        y_hat_split = y_hat_split.flatten()  # Only for univariate models
+        print('y_hatsplit length', len(y_hat_split), mc['output_size'])
+        assert len(
+            y_hat_split[:24]) == mc['output_size'], 'Forecast should have length equal to output_size'
+
         if mc['normalizer_y'] is not None:
             y_hat_split = scaler_y.inv_scale(x=y_hat_split[:24])
 
