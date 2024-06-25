@@ -47,7 +47,7 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
             if col in X_df.columns:
                 X_df[col] = scaler_x.scale(X_df[[col]], mask=mask)
 
-    filter_variables = ['attention', 'temperature_2m', 'relative_humidity_2m', 'precipitation',
+    filter_variables = ['unique_id','ds','attention', 'temperature_2m', 'relative_humidity_2m', 'precipitation',
                         'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m',
                         'dayofweek', 'month', 'day', 'season', 'is_weekend', 'is_month_start',
                         'is_month_end', 'is_quarter_start', 'days_since_start_of_year',
@@ -157,12 +157,6 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     # This dictionary will be used to select particular lags as inputs for each y and exogenous variables.
     # For eg, -1 will include the future (corresponding to the forecasts variables), -2 will add the last
     # available day (1 day lag), etc.
-    """
-    'attention', 'temperature_2m', 'relative_humidity_2m', 'precipitation',
-       'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m',
-       'dayofweek', 'month', 'day', 'season', 'is_weekend', 'is_month_start',
-       'is_month_end', 'is_quarter_start', 'days_since_start_of_year',
-       """
     include_var_dict = {
         'y': [-1],
         'dayofweek': [],
