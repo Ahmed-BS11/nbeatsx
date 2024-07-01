@@ -162,22 +162,21 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         'dayofweek': [],
         'month': [-1],
         'day': [-1],
-        # 'season': [-1],
+        'RRP': [-1],
+        'season': [-1],
         'is_weekend': [-2, -1],
         'is_month_start': [-2, -1],
         'is_month_end': [-2, -1],
         'is_quarter_start': [-1],
-        'days_since_start_of_year': [-2, -1],
+        #'days_since_start_of_year': [-2, -1],
         'temperature_2m':[-1],
         'relative_humidity_2m':[-1],
         'precipitation':[-1],
-        'snow_depth':[-1],
+        #'snow_depth':[-1],
         'surface_pressure':[],
         'cloud_cover':[],
         'wind_speed_10m':[-1],
         'attention':[]
-
-
     }
 
     if mc['incl_pr1']:
@@ -192,11 +191,11 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     if mc['incl_ex1_0']: include_var_dict['attention'].append(-1)
     if mc['incl_ex1_1']: include_var_dict['attention'].append(-2)
     if mc['incl_ex1_7']: include_var_dict['attention'].append(-8)
-    """ 
-    if mc['incl_ex2_0']: include_var_dict['Exogenous2'].append(-1)
-    if mc['incl_ex2_1']: include_var_dict['Exogenous2'].append(-2)
-    if mc['incl_ex2_7']: include_var_dict['Exogenous2'].append(-8)
-    """
+    
+    if mc['incl_ex2_0']: include_var_dict['RRP'].append(-1)
+    if mc['incl_ex2_1']: include_var_dict['RRP'].append(-2)
+    if mc['incl_ex2_7']: include_var_dict['RRP'].append(-8)
+    
     # Inside the model only the week_day of the first hour of the horizon will be selected as input
     if mc['incl_day']:
         include_var_dict['dayofweek'].append(-1)
