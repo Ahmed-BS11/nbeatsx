@@ -50,7 +50,7 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
                         'is_month_start', 'is_month_end', 'is_quarter_start',
                         'temperature_2m', 'relative_humidity_2m',
                         'precipitation', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']
-
+    print("*"*50,X_df.columns)
     X_df = X_df[filter_variables]
 
     return Y_df, X_df, scaler_y
