@@ -160,7 +160,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         'dayofweek': [],
         'month': [-1],
         'day': [-1],
-        #'RRP': [-1],
+        'RRP': [-1],
         'season': [-1],
         'is_weekend': [-2, -1],
         'is_month_start': [-2, -1],
@@ -192,14 +192,14 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         include_var_dict['attention'].append(-2)
     if mc['incl_ex1_7']:
         include_var_dict['attention'].append(-8)
-
+    """
     if mc['incl_ex2_0']:
         include_var_dict['RRP'].append(-1)
     if mc['incl_ex2_1']:
         include_var_dict['RRP'].append(-2)
     if mc['incl_ex2_7']:
         include_var_dict['RRP'].append(-8)
-
+    """
     # Inside the model only the week_day of the first hour of the horizon will be selected as input
     if mc['incl_day']:
         include_var_dict['dayofweek'].append(-1)
