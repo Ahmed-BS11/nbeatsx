@@ -345,7 +345,7 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
     """
     Auxiliary function to produce rolling forecast and re-calibration of the NBEATSx model on the test set.
     """
-
+    print(47*'=*5' + '\n',X_df.columns)
     print(47*'=' + '\n')
     print(pd.Series(mc))
     print(47*'=' + '\n')
