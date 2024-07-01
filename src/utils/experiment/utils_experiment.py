@@ -207,7 +207,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     print(47*'=' + '\n')
     print(pd.Series(mc))
     print(47*'=' + '\n')
-
+    print(47*'=*5' + '\n',X_df.columns)
     # -------------------------------------------------- Train and Validation Mask --------------------------------------------------
     # train_mask: 1 to keep, 0 to hide from training
     train_outsample_mask = np.ones(len(Y_df), dtype=int)
@@ -345,7 +345,6 @@ def run_test_nbeatsx(mc, Y_df, X_df, len_outsample):
     """
     Auxiliary function to produce rolling forecast and re-calibration of the NBEATSx model on the test set.
     """
-    print(47*'=*5' + '\n',X_df.columns)
     print(47*'=' + '\n')
     print(pd.Series(mc))
     print(47*'=' + '\n')
