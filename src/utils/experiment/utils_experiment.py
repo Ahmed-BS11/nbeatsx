@@ -39,14 +39,14 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     if normalizer_x is not None:
         scaler_x = Scaler(normalizer=normalizer_x)
 
-        for col in ['attention', 'RRP', 'dayofweek', 'month', 'day', 'season', 'is_weekend',
+        for col in ['attention',  'dayofweek', 'month', 'day', 'season', 'is_weekend',
                     'is_month_start', 'is_month_end', 'is_quarter_start',
                     'temperature_2m', 'relative_humidity_2m',
                     'precipitation', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']:
             if col in X_df.columns:
                 X_df[col] = scaler_x.scale(X_df[[col]], mask=mask)
 
-    filter_variables = ['unique_id', 'ds', 'attention', 'RRP', 'dayofweek', 'month', 'day', 'season', 'is_weekend',
+    filter_variables = ['unique_id', 'ds', 'attention',  'dayofweek', 'month', 'day', 'season', 'is_weekend',
                         'is_month_start', 'is_month_end', 'is_quarter_start',
                         'temperature_2m', 'relative_humidity_2m',
                         'precipitation', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']
