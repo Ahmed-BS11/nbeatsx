@@ -39,19 +39,17 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     if normalizer_x is not None:
         scaler_x = Scaler(normalizer=normalizer_x)
 
-        for col in ['attention', 'temperature_2m', 'relative_humidity_2m', 'precipitation',
-                    'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m',
-                    'dayofweek', 'month', 'day', 'season', 'is_weekend', 'is_month_start',
-                    'is_month_end', 'is_quarter_start', 'days_since_start_of_year',
-                    ]:
+        for col in ['attention', 'RRP', 'dayofweek', 'month', 'day', 'season', 'is_weekend',
+                    'is_month_start', 'is_month_end', 'is_quarter_start',
+                    'y', 'temperature_2m', 'relative_humidity_2m',
+                    'precipitation', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']:
             if col in X_df.columns:
                 X_df[col] = scaler_x.scale(X_df[[col]], mask=mask)
 
-    filter_variables = ['unique_id','ds','attention', 'temperature_2m', 'relative_humidity_2m', 'precipitation',
-                        'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m',
-                        'dayofweek', 'month', 'day', 'season', 'is_weekend', 'is_month_start',
-                        'is_month_end', 'is_quarter_start', 'days_since_start_of_year',
-                        ]
+    filter_variables = ['unique_id', 'ds', 'attention', 'RRP', 'dayofweek', 'month', 'day', 'season', 'is_weekend',
+                        'is_month_start', 'is_month_end', 'is_quarter_start',
+                        'y', 'temperature_2m', 'relative_humidity_2m',
+                        'precipitation', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']
 
     X_df = X_df[filter_variables]
 
@@ -168,15 +166,15 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         'is_month_start': [-2, -1],
         'is_month_end': [-2, -1],
         'is_quarter_start': [-1],
-        #'days_since_start_of_year': [-2, -1],
-        'temperature_2m':[-1],
-        'relative_humidity_2m':[-1],
-        'precipitation':[-1],
-        #'snow_depth':[-1],
-        'surface_pressure':[],
-        'cloud_cover':[],
-        'wind_speed_10m':[-1],
-        'attention':[]
+        # 'days_since_start_of_year': [-2, -1],
+        'temperature_2m': [-1],
+        'relative_humidity_2m': [-1],
+        'precipitation': [-1],
+        # 'snow_depth':[-1],
+        'surface_pressure': [],
+        'cloud_cover': [],
+        'wind_speed_10m': [-1],
+        'attention': []
     }
 
     if mc['incl_pr1']:
@@ -187,15 +185,21 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         include_var_dict['y'].append(-4)
     if mc['incl_pr7']:
         include_var_dict['y'].append(-8)
-    
-    if mc['incl_ex1_0']: include_var_dict['attention'].append(-1)
-    if mc['incl_ex1_1']: include_var_dict['attention'].append(-2)
-    if mc['incl_ex1_7']: include_var_dict['attention'].append(-8)
-    
-    if mc['incl_ex2_0']: include_var_dict['RRP'].append(-1)
-    if mc['incl_ex2_1']: include_var_dict['RRP'].append(-2)
-    if mc['incl_ex2_7']: include_var_dict['RRP'].append(-8)
-    
+
+    if mc['incl_ex1_0']:
+        include_var_dict['attention'].append(-1)
+    if mc['incl_ex1_1']:
+        include_var_dict['attention'].append(-2)
+    if mc['incl_ex1_7']:
+        include_var_dict['attention'].append(-8)
+
+    if mc['incl_ex2_0']:
+        include_var_dict['RRP'].append(-1)
+    if mc['incl_ex2_1']:
+        include_var_dict['RRP'].append(-2)
+    if mc['incl_ex2_7']:
+        include_var_dict['RRP'].append(-8)
+
     # Inside the model only the week_day of the first hour of the horizon will be selected as input
     if mc['incl_day']:
         include_var_dict['dayofweek'].append(-1)
