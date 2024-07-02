@@ -40,16 +40,16 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
         scaler_x = Scaler(normalizer=normalizer_x)
 
         for col in ['attention',  'dayofweek', 'month', 'day', 'season', 'is_weekend',
-                    'is_month_start', 'is_month_end', 'is_quarter_start',
+                    'is_month_start', 'days_since_start_of_year','is_month_end', 'is_quarter_start',
                     'temperature_2m', 'relative_humidity_2m',
-                    'precipitation', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']:
+                    'precipitation','snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m','topattn']:
             if col in X_df.columns:
                 X_df[col] = scaler_x.scale(X_df[[col]], mask=mask)
 
     filter_variables = ['unique_id', 'ds', 'attention',  'dayofweek', 'month', 'day', 'season', 'is_weekend',
-                        'is_month_start', 'is_month_end', 'is_quarter_start',
+                        'is_month_start', 'days_since_start_of_year', 'is_month_end', 'is_quarter_start',
                         'temperature_2m', 'relative_humidity_2m',
-                        'precipitation', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']
+                        'precipitation','snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m','topattn']
     
     X_df = X_df[filter_variables]
 
@@ -170,11 +170,12 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         'temperature_2m': [-1],
         'relative_humidity_2m': [-1],
         'precipitation': [-1],
-        # 'snow_depth':[-1],
+        'snow_depth':[-1],
         'surface_pressure': [],
         'cloud_cover': [],
         'wind_speed_10m': [-1],
-        'attention': []
+        'attention': [],
+        'topattn':[],
     }
 
     if mc['incl_pr1']:
@@ -192,14 +193,14 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         include_var_dict['attention'].append(-2)
     if mc['incl_ex1_7']:
         include_var_dict['attention'].append(-8)
-    """
+    
     if mc['incl_ex2_0']:
-        include_var_dict['RRP'].append(-1)
+        include_var_dict['topattn'].append(-1)
     if mc['incl_ex2_1']:
-        include_var_dict['RRP'].append(-2)
+        include_var_dict['topattn'].append(-2)
     if mc['incl_ex2_7']:
-        include_var_dict['RRP'].append(-8)
-    """
+        include_var_dict['topattn'].append(-8)
+    
     # Inside the model only the week_day of the first hour of the horizon will be selected as input
     if mc['incl_day']:
         include_var_dict['dayofweek'].append(-1)
