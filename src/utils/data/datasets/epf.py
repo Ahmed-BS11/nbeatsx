@@ -122,7 +122,7 @@ class EPF:
 
         print('\n', '3rd head', df.head())
         print(df['ds'].iloc[-1])
-        df['ds'] = pd.to_datetime(df['ds'])
+        df['ds'] = pd.to_datetime(df['ds'],format='mixed')
         print(df['ds'].iloc[-1])
         df['week_day'] = df['ds'].dt.dayofweek
 
