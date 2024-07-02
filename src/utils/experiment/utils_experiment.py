@@ -175,7 +175,7 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
         'cloud_cover': [],
         'wind_speed_10m': [-1],
         'attention': [],
-        'topattn':[],
+        'topattn':[-1],
     }
 
     if mc['incl_pr1']:
