@@ -132,11 +132,11 @@ class EPF:
         dummies_cols = [col for col in df if col.startswith('day')]
 
         Y = df.filter(items=['unique_id', 'ds', 'y'])
-        X = df.filter(items=['unique_id', 'ds', 'attention', 'topattn' ,'dayofweek', 'month', 'day', 'season', 'is_weekend',
-                    'is_month_start', 'days_since_start_of_year','is_month_end', 'is_quarter_start',
-                    'temperature_2m', 'relative_humidity_2m',
-                    'precipitation','snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m'] +
-                      dummies_cols)
+        X = df.filter(items=['unique_id', 'ds', 'attention', 'topattn' , 'is_weekend','temperature_2m','dayofweek',]) #'month', 'day', 'season', 'is_weekend',
+                   # 'is_month_start', 'days_since_start_of_year','is_month_end', 'is_quarter_start',
+                   # 'temperature_2m', 'relative_humidity_2m',
+                   # 'precipitation','snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m'])# + dummies_cols)
+                     
 
         return Y, X, None
 

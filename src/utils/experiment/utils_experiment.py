@@ -39,15 +39,16 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     if normalizer_x is not None:
         scaler_x = Scaler(normalizer=normalizer_x)
 
-        for col in ['attention', 'topattn' ,'dayofweek', 'month', 'day', 'season', 'is_weekend',
-                    'is_month_start', 'days_since_start_of_year','is_month_end', 'is_quarter_start',
-                    'temperature_2m', 'relative_humidity_2m',
-                    'precipitation','snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']:
+        for col in ['attention', 'topattn' ,'temperature_2m','dayofweek',  'is_weekend'] :
+                    #,'month', 'day', 'season'
+                    #'is_month_start', 'days_since_start_of_year','is_month_end', 'is_quarter_start',
+                    #'temperature_2m', 'relative_humidity_2m',
+                    #'precipitation','snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m']:
             if col in X_df.columns:
                 X_df[col] = scaler_x.scale(X_df[[col]], mask=mask)
 
-    filter_variables = ['unique_id', 'ds', 'attention','topattn' ,  'dayofweek', 'month', 'day', 'season', 'is_weekend',
-                        'is_month_start', 'temperature_2m', 'relative_humidity_2m','precipitation',]
+    filter_variables = ['unique_id', 'ds', 'attention', 'topattn' ,'temperature_2m','dayofweek',  'is_weekend']# 'month', 'day', 'season', 'is_weekend',
+                       # 'is_month_start', 'temperature_2m', 'relative_humidity_2m','precipitation',]
     #'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m','days_since_start_of_year', 'is_month_end', 'is_quarter_start',
     
     X_df = X_df[filter_variables]
@@ -157,18 +158,18 @@ def run_val_nbeatsx(hyperparameters, Y_df, X_df, data_augmentation, random_valid
     include_var_dict = {
         'y': [-1],
         'dayofweek': [],
-        'month': [-1],
-        'day': [-1],
+        #'month': [-1],
+        #'day': [-1],
         #'RRP': [-1],
-        'season': [-1],
+        #'season': [-1],
         'is_weekend': [-2, -1],
-        'is_month_start': [-2, -1],
+        #'is_month_start': [-2, -1],
         #'is_month_end': [-2, -1],
         #'is_quarter_start': [-1],
         # 'days_since_start_of_year': [-2, -1],
         'temperature_2m': [-1],
-        'relative_humidity_2m': [-1],
-        'precipitation': [-1],
+        #'relative_humidity_2m': [-1],
+        #'precipitation': [-1],
         #'snow_depth':[-1],
         #'surface_pressure': [],
         #'cloud_cover': [],
