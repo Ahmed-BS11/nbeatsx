@@ -39,7 +39,7 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
     if normalizer_x is not None:
         scaler_x = Scaler(normalizer=normalizer_x)
 
-        for col in ['attention', 'dayofweek'] :
+        for col in ['attention', 'dayofweek', 'temperature_2m','wind_speed_10m' ] :
                     #,'month', 'day', 'season''topattn' ,
                     #'is_month_start', 'days_since_start_of_year','is_month_end', 'is_quarter_start',
                     #'temperature_2m', 'relative_humidity_2m',
@@ -47,7 +47,7 @@ def transform_data(Y_df, X_df, mask, normalizer_y, normalizer_x):
             if col in X_df.columns:
                 X_df[col] = scaler_x.scale(X_df[[col]], mask=mask)
 
-    filter_variables = ['unique_id', 'ds', 'attention', 'dayofweek',  ]# 'topattn' ,'temperature_2m','is_weekend','month', 'day', 'season', 'is_weekend',
+    filter_variables = ['unique_id', 'ds', 'attention', 'dayofweek', 'temperature_2m','wind_speed_10m' ]# 'topattn' ,'temperature_2m','is_weekend','month', 'day', 'season', 'is_weekend',
                        # 'is_month_start', 'temperature_2m', 'relative_humidity_2m','precipitation',]
     #'snow_depth', 'surface_pressure', 'cloud_cover', 'wind_speed_10m','days_since_start_of_year', 'is_month_end', 'is_quarter_start',
     
